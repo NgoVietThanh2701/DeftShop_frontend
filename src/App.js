@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/admin/login/Login';
+import Home from './pages/admin/home/Home'
+import ListCategory from './pages/admin/category/listCategory/ListCategory'
+import ListUser from './pages/admin/users/listUser/ListUser';
+import ListProduct from './pages/admin/product/listProduct/ListProduct';
+import SingleCategory from './pages/admin/category/singleCategory/SingleCategory';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+   return (
+      <div className="App">
+         <BrowserRouter>
+            <Routes>
+               {/* admin panel */}
+               <Route path='/admin'>
+                  <Route index element={<Home />} />
+                  <Route path='login' element={<Login />} />
+                  <Route path='category'>
+                     <Route index element={<ListCategory />} />
+                     <Route path=':id' element={<SingleCategory />} />
+                     <Route path=':id/:subId' element={<ListProduct />} />
+                  </Route>
+                  <Route path='users' element={<ListUser />} />
+                  <Route path='products' element={<ListProduct />} />
+               </Route>
+               {/* user */}
+            </Routes>
+         </BrowserRouter>
+      </div>
+   );
 }
 
 export default App;
