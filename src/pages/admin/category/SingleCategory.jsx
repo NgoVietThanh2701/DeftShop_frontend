@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from '../../../../components/admin/navbar/Navbar';
-import Sidebar from '../../../../components/admin/sidebar/Sidebar';
-import "./singleCategory.scss";
+import React, { useCallback, useEffect, useState } from 'react'
+import Navbar from '../../../components/admin/navbar/Navbar';
+import Sidebar from '../../../components/admin/sidebar/Sidebar';
+import "../category/listCategory/listCategory.scss";
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, Link, useParams } from 'react-router-dom'
-import { getMeAdmin } from '../../../../features/admin/authSlice';
-import DataTable from '../../../../components/admin/datatable/DataTable';
+import { getMeAdmin } from '../../../features/admin/authSlice';
+import DataTable from '../../../components/admin/datatable/DataTable';
 import axios from 'axios';
+import FormDialog from '../../../components/admin/formDialog/FormDialog'
 
 const SingleCategory = () => {
 
    const dispatch = useDispatch();
    const navigate = useNavigate();
-   const { isError } = useSelector((state) => state.auth);
+   const { isError, admin } = useSelector((state) => state.auth);
    const [subCategory, setSubCategory] = useState([]);
    const { id } = useParams();
 
@@ -28,26 +29,43 @@ const SingleCategory = () => {
    }, [isError, navigate]);
 
    // get category
-   useEffect(() => {
-      const getSubCategory = async () => {
-         const response = await axios.get(`http://localhost:5000/admin/category/${id}`);
-         setSubCategory(response.data);
-      }
-      getSubCategory();
+   const getSubCategory = useCallback(async () => {
+      const response = await axios.get(`http://localhost:5000/admin/category/${id}`);
+      setSubCategory(response.data);
    }, [id]);
+
+
+   useEffect(() => {
+      getSubCategory();
+   }, [getSubCategory]);
+
+   //delete
+   const deleteCategory = async (subCategoryId) => {
+      await axios.delete(`http://localhost:5000/admin/category/${id}/${subCategoryId}`);
+      getSubCategory();
+   }
 
    const actionColumn = [
       {
          field: "action",
          headerName: "Action",
-         width: 150,
+         width: 220,
          renderCell: (params) => {
             return (
                <div className='cellAction'>
                   <Link to={`${params.row.uuid}`} style={{ textDecoration: "none" }}>
                      <div className='viewButton'>View</div>
                   </Link>
-                  <div className='deleteButton'>Delete</div>
+                  {admin && !admin.role &&
+                     <div style={{ textDecoration: "none" }}>
+                        <div className='updateButton'>
+                           <FormDialog title="Update" idSub={params.row.uuid} id={id} checkType={false} />
+                        </div>
+                     </div>}
+
+                  <div onClick={() => deleteCategory(params.row.uuid)} style={{ textDecoration: "none" }}>
+                     <div className='deleteButton'>Delete</div>
+                  </div>
                </div >
             )
          }
@@ -55,15 +73,21 @@ const SingleCategory = () => {
    ]
 
    return (
-      <div className='singleCategory'>
+      <div className='list'>
          <Sidebar />
-         <div className="singleCategoryContainer">
+         <div className="listContainer">
             <Navbar />
             <DataTable
                userRows={subCategory}
                userColumns={userColumns}
                actionColumn={actionColumn}
-               title="loại" />
+               title="loại"
+               //checkNew={(admin && admin.role) ? false : true} 
+               isOpenDialog={(admin && !admin.role) && true}
+               id={id}
+               checkType={true}
+               CallbackUpdate={getSubCategory}
+            />
          </div>
       </div>
    )
@@ -97,7 +121,7 @@ const userColumns = [
       renderCell: (params) => {
          return (
             <div className=''>
-               {params.row.seller.name}
+               {params.row.seller.id} | {params.row.seller.nameShop}
             </div>
          )
       }

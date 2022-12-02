@@ -43,7 +43,8 @@ const Login = () => {
                   <h1>Welcome Back</h1>
                   <h6>Login your Account</h6>
                   {isError && <span style={{ color: 'red' }}>{message}</span>}
-                  <form onSubmit={Auth} className="form">                        <label htmlFor="Username">Email</label><br />
+                  <form onSubmit={Auth} className="form">
+                     <label htmlFor="Username">Email</label><br />
                      <input type="email" name="email"
                         placeholder="Your email"
                         value={email}

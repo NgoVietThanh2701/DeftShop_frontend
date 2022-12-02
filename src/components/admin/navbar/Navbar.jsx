@@ -8,6 +8,7 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
 import { useSelector } from 'react-redux'
+import avatar from '../../../images/avatar.jpg'
 
 const Navbar = () => {
 
@@ -42,10 +43,14 @@ const Navbar = () => {
                <div className="item">
                   <ListOutlinedIcon className='icon' />
                </div>
-               <div className="item">
-                  {admin && admin.name}
+               <div className="item" style={{ fontWeight: 700 }}>
+                  {admin && admin.role && admin.name}
+                  {admin && !admin.role && admin.user.name}
                   <img
-                     src='https://www.w3schools.com/w3images/avatar2.png'
+                     src={(admin && admin.role) ?
+                        (admin.url !== null ? admin.url : avatar) :
+                        ((admin && admin.user.url !== null) ? admin.user.url : avatar)
+                     }
                      alt=''
                      className='avatar' />
                </div>

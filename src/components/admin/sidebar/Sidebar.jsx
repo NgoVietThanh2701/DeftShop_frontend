@@ -6,7 +6,7 @@ import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined';
 import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import SettingsIcon from '@mui/icons-material/Settings';
+// import SettingsIcon from '@mui/icons-material/Settings';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOutAdmin, reset } from "../../../features/admin/authSlice";
@@ -26,7 +26,7 @@ const Sidebar = () => {
    return (
       <div className='sidebar'>
          <div className="top">
-            <NavLink to="/" style={{ textDecoration: "none" }}>
+            <NavLink to="/admin" style={{ textDecoration: "none" }}>
                <span className='logo'>DeftShop</span>
             </NavLink>
          </div>
@@ -41,86 +41,59 @@ const Sidebar = () => {
                   </li>
                </NavLink>
                <p className="title">LIST</p>
-               {(admin && !admin.role) ?
+               {(admin && (!admin.role || (admin.role && admin.role === 'admin'))) &&
                   <NavLink to="/admin/category" style={{ textDecoration: "none" }}>
                      <li>
                         <PersonOutlineOutlinedIcon className='icon' />
                         <span>Category</span>
                      </li>
                   </NavLink>
-                  : admin && admin.role !== "manager_user" && (
-                     <NavLink to="/admin/category" style={{ textDecoration: "none" }}>
-                        <li>
-                           <PersonOutlineOutlinedIcon className='icon' />
-                           <span>Category</span>
-                        </li>
-                     </NavLink>
-                  )}
+               }
 
-               {(admin && !admin.role) ?
+               {(admin && (!admin.role || (admin.role && admin.role === 'admin'))) &&
                   <NavLink to="/admin/products" style={{ textDecoration: "none" }}>
                      <li>
                         <StoreOutlinedIcon className='icon' />
                         <span>Products</span>
                      </li>
                   </NavLink>
-                  : admin && admin.role !== "manager_user" && (
-                     <NavLink to="/admin/products" style={{ textDecoration: "none" }}>
-                        <li>
-                           <StoreOutlinedIcon className='icon' />
-                           <span>Products</span>
-                        </li>
-                     </NavLink>
-                  )}
+               }
 
-               {admin && admin.role && admin.role !== "manager_category" && (
-                  <NavLink to="/admin/users" style={{ textDecoration: "none" }}>
+               {(admin && admin.role === 'admin') &&
+                  <NavLink to="/admin/sellers" style={{ textDecoration: "none" }}>
                      <li>
                         <CreditCardOutlinedIcon className='icon' />
                         <span>Sellers</span>
                      </li>
                   </NavLink>
-               )}
+               }
 
-               {(admin && !admin.role) ?
+               {(admin && (!admin.role || (admin.role && admin.role === 'admin'))) &&
                   <NavLink to="/admin/users" style={{ textDecoration: "none" }}>
                      <li>
                         <LocalShippingOutlinedIcon className='icon' />
                         <span>Users</span>
                      </li>
                   </NavLink>
-                  : admin && admin.role !== "manager_category" && (
-                     <NavLink to="/admin/users" style={{ textDecoration: "none" }}>
-                        <li>
-                           <LocalShippingOutlinedIcon className='icon' />
-                           <span>Users</span>
-                        </li>
-                     </NavLink>
-                  )}
+               }
 
                <p className="title">USEFUL</p>
-               <li>
-                  <NotificationsActiveOutlinedIcon className='icon' />
-                  <span>Notifications</span>
-               </li>
-               <p className="title">SERVICE</p>
-               <li>
-                  <NotificationsActiveOutlinedIcon className='icon' />
-                  <span>System Health</span>
-               </li>
-               <li>
-                  <NotificationsActiveOutlinedIcon className='icon' />
-                  <span>Logs</span>
-               </li>
-               <li>
-                  <SettingsIcon className='icon' />
-                  <span>Settings</span>
-               </li>
+               {(admin && admin.role === 'admin') &&
+                  <NavLink to="/admin/notify" style={{ textDecoration: "none" }}>
+                     <li>
+                        <NotificationsActiveOutlinedIcon className='icon' />
+                        <span>Request</span>
+                     </li>
+                  </NavLink>
+               }
+
                <p className="title">USER</p>
-               <li>
-                  <NotificationsActiveOutlinedIcon className='icon' />
-                  <span>Profile</span>
-               </li>
+               <NavLink to="/admin/profile" style={{ textDecoration: "none" }}>
+                  <li>
+                     <NotificationsActiveOutlinedIcon className='icon' />
+                     <span>Profile</span>
+                  </li>
+               </NavLink>
                <li>
                   <NotificationsActiveOutlinedIcon className='icon' />
                   <span onClick={logout}>Logout</span>

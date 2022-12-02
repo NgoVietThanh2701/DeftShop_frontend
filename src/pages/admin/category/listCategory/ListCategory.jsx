@@ -7,13 +7,13 @@ import { useNavigate, Link } from 'react-router-dom'
 import { getMeAdmin } from '../../../../features/admin/authSlice';
 import DataTable from '../../../../components/admin/datatable/DataTable';
 import axios from 'axios';
-
+import FormDialog from '../../../../components/admin/formDialog/FormDialog'
 
 const ListCategory = () => {
 
    const dispatch = useDispatch();
    const navigate = useNavigate();
-   const { isError } = useSelector((state) => state.auth);
+   const { isError, admin } = useSelector((state) => state.auth);
    const [category, setCategory] = useState([]);
 
    // secure  if user no login & navigate login page
@@ -28,27 +28,45 @@ const ListCategory = () => {
    }, [isError, navigate]);
 
    // get category
-   useEffect(() => {
-      getCategory();
-   }, []);
-
    const getCategory = async () => {
       const response = await axios.get('http://localhost:5000/admin/category');
       setCategory(response.data);
    }
 
+   useEffect(() => {
+      getCategory();
+   }, []);
+
+
+   //delete
+   const deleteCategory = async (categoryId) => {
+      await axios.delete(`http://localhost:5000/admin/category/${categoryId}`);
+      getCategory();
+   }
+
+
    const actionColumn = [
       {
          field: "action",
          headerName: "Action",
-         width: 150,
+         width: 220,
          renderCell: (params) => {
             return (
                <div className='cellAction'>
                   <Link to={`${params.row.uuid}`} style={{ textDecoration: "none" }}>
                      <div className='viewButton'>View</div>
                   </Link>
-                  <div className='deleteButton'>Delete</div>
+                  {admin && admin.role &&
+                     <div style={{ textDecoration: "none" }}>
+                        <div className='updateButton'>
+                           <FormDialog title="Update" id={params.row.uuid} checkType={false} />
+                        </div>
+                     </div>}
+
+                  {admin && admin.role &&
+                     <div onClick={() => deleteCategory(params.row.uuid)} style={{ textDecoration: "none" }}>
+                        <div className='deleteButton'>Delete</div>
+                     </div>}
                </div >
             )
          }
@@ -56,15 +74,20 @@ const ListCategory = () => {
    ]
 
    return (
-      <div className='listCategory'>
+      <div className='list'>
          <Sidebar />
-         <div className="listCategoryContainer">
+         <div className="listContainer">
             <Navbar />
             <DataTable
                userRows={category}
                userColumns={userColumns}
                actionColumn={actionColumn}
-               title="danh mục" />
+               title="Danh mục"
+               // checkNew={(admin && admin.role) ? true : false}
+               isOpenDialog={(admin && admin.role) && true}
+               checkType={true}
+               CallbackUpdate={getCategory}
+            />
          </div>
       </div>
    )
@@ -85,7 +108,8 @@ const userColumns = [
       width: 250,
       renderCell: (params) => {
          return (
-            <div className=''>
+            <div className='cellWithImg'>
+               <img className="cellImg" src={params.row.manager.url} alt="avatar" style={{ width: "40px", height: "40px" }} />
                {params.row.manager.name}
             </div>
          )

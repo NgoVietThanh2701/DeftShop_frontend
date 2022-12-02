@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../../../../components/admin/navbar/Navbar';
-import Sidebar from '../../../../components/admin/sidebar/Sidebar';
-import "./listProduct.scss";
+import Navbar from '../../../components/admin/navbar/Navbar';
+import Sidebar from '../../../components/admin/sidebar/Sidebar';
+import "../category/listCategory/listCategory.scss";
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, Link, useParams } from 'react-router-dom'
-import { getMeAdmin } from '../../../../features/admin/authSlice';
-import DataTable from '../../../../components/admin/datatable/DataTable';
+import { useNavigate, Link } from 'react-router-dom'
+import { getMeAdmin } from '../../../features/admin/authSlice';
+import DataTable from '../../../components/admin/datatable/DataTable';
 import axios from 'axios';
 
 const ListProduct = () => {
@@ -14,7 +14,6 @@ const ListProduct = () => {
    const navigate = useNavigate();
    const { isError } = useSelector((state) => state.auth);
    const [products, setProducts] = useState([])
-   const { id, subId } = useParams();
 
    // secure  if user no login & navigate login page
    useEffect(() => {
@@ -28,28 +27,35 @@ const ListProduct = () => {
    }, [isError, navigate]);
 
    // get products
+   const getProducts = async () => {
+      const response = await axios.get(`http://localhost:5000/admin/products`);
+      setProducts(response.data);
+   }
+
    useEffect(() => {
-      const getProducts = async () => {
-         const response = await axios.get(`http://localhost:5000/admin/category/${id}/${subId}`);
-         setProducts(response.data);
-         console.log(response.data);
-      }
       getProducts();
-   }, [id, setProducts, subId]);
+   }, []);
+
+   const deleteProduct = async (productId) => {
+      await axios.delete(`http://localhost:5000/admin/products/${productId}`);
+      getProducts();
+   }
 
    //
    const actionColumn = [
       {
          field: "action",
          headerName: "Action",
-         width: 150,
+         width: 220,
          renderCell: (params) => {
             return (
                <div className='cellAction'>
                   <Link to={`${params.row.uuid}`} style={{ textDecoration: "none" }}>
                      <div className='viewButton'>View</div>
                   </Link>
-                  <div className='deleteButton'>Delete</div>
+                  <div onClick={() => deleteProduct(params.row.uuid)} style={{ textDecoration: "none" }}>
+                     <div className='deleteButton'>Delete</div>
+                  </div>
                </div >
             )
          }
@@ -57,9 +63,9 @@ const ListProduct = () => {
    ]
 
    return (
-      <div className='listProduct'>
+      <div className='list'>
          <Sidebar />
-         <div className="listProductContainer">
+         <div className="listContainer">
             <Navbar />
             <DataTable
                userRows={products}
@@ -74,11 +80,11 @@ const ListProduct = () => {
 export default ListProduct
 
 const userColumns = [
-   { field: "id", headerName: "ID", width: 60 },
+   { field: "id", headerName: "ID", width: 70 },
    {
       field: "danhmuc",
       headerName: "Danh mục",
-      width: 120,
+      width: 100,
       renderCell: (params) => {
          return (
             <div>
@@ -90,7 +96,7 @@ const userColumns = [
    {
       field: "loai",
       headerName: "Loại",
-      width: 120,
+      width: 100,
       renderCell: (params) => {
          return (
             <div>
@@ -100,9 +106,21 @@ const userColumns = [
       }
    },
    {
+      field: ' nameShop',
+      headerName: "Shop",
+      width: 120,
+      renderCell: (params) => {
+         return (
+            <div>
+               {params.row.seller.nameShop}
+            </div>
+         )
+      }
+   },
+   {
       field: "name",
       headerName: "Sản phẩm",
-      width: 220,
+      width: 200,
       renderCell: (params) => {
          return (
             <div className='cellWithImg'>
@@ -115,13 +133,23 @@ const userColumns = [
    {
       field: "price",
       headerName: "Giá",
-      width: 100,
+      width: 70,
+   },
+   {
+      field: "discount",
+      headerName: "Giảm(%)",
+      width: 80
    },
    {
       field: "description",
       headerName: 'Mô tả',
-      width: 450,
+      width: 150,
    },
+   {
+      field: 'createdAt',
+      headerName: 'Thời gian',
+      width: 150
+   }
 
 ];
 

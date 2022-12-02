@@ -8,7 +8,7 @@
 
    .wrapper {
       width: 100%;
-      padding: 20px;
+      padding: 12px;
       display: flex; // sort element horizontal
       align-items: center;
       justify-content: space-between;
@@ -39,17 +39,17 @@
          .item {
             display: flex;
             align-items: center;
-            margin-right: 15px;
+            margin-right: 12px;
             position: relative;
-            gap: 5px;
+            gap: 7px;
 
             .icon {
                font-size: 20px;
             }
 
             .avatar {
-               width: 30px;
-               height: 30px;
+               width: 32px;
+               height: 32px;
                border-radius: 50%;
             }
 
