@@ -70,7 +70,8 @@ export default function CustomizedDialogs({ title, id, idSub, checkType, Callbac
    const update = async () => {
       await axios.patch(idSub ? `http://localhost:5000/admin/category/${id}/${idSub}` : `http://localhost:5000/admin/category/${id}`, {
          name: name,
-      })
+      });
+      CallbackUpdate();
    }
 
 
@@ -112,10 +113,11 @@ export default function CustomizedDialogs({ title, id, idSub, checkType, Callbac
                Thêm {title} sản phẩm
             </BootstrapDialogTitle>
             <DialogContent dividers>
-               <form style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-               }} onSubmit={SaveCategory}>
+               <form
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                  }} onSubmit={SaveCategory}>
                   <p>{msg}</p>
                   <label className='label'
                      style={{

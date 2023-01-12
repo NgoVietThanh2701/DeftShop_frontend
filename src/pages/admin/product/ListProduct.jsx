@@ -50,7 +50,7 @@ const ListProduct = () => {
          renderCell: (params) => {
             return (
                <div className='cellAction'>
-                  <Link to={`${params.row.uuid}`} style={{ textDecoration: "none" }}>
+                  <Link style={{ textDecoration: "none" }}>
                      <div className='viewButton'>View</div>
                   </Link>
                   <div onClick={() => deleteProduct(params.row.uuid)} style={{ textDecoration: "none" }}>
